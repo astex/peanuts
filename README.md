@@ -1,4 +1,4 @@
 peanuts
 =======
 
-Tiny flask based CMS and blog engine
+Tiny flask based CMS and blog engine.
