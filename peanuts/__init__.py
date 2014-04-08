@@ -21,7 +21,7 @@ def create_app(config='config', app_name=__name__):
                 return e.response
 
             if self.debug:
-                raise e
+                return super(PeanutsFlask, self).handle_user_exception(e)
             else:
                 return ServerError.from_exception(e).response
 
