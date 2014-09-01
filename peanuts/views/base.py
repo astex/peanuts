@@ -34,17 +34,25 @@ class BaseRestView(FlaskView):
     def jsonify(self, data):
         """Makes a nice json response."""
         return jsonify(
-            data = [
-                    json.dumps(d.get_dictionary(self.verbosity))
-                    for d in data
+            data=[
+                d.get_dictionary(self.verbosity)
+                for d in data
                 ] if isinstance(data, list) else
-                json.dumps(data.get_dictionary(self.verbosity)),
-            verbosity = self.verbosity,
-            url = request.url
-        )
+                data.get_dictionary(self.verbosity),
+            verbosity=self.verbosity,
+            url=request.url
+            )
 
     def index(self):
         """Gets a list of objects from the controller."""
         return self.jsonify(self.controller.index(
-                request.args
+            request.args
+            ))
+
+    def get(self, id_):
+        """Gets an individual object from the controller."""
+        print(id_)
+        return self.jsonify(self.controller.get(
+            int(id_),
+            request.args
             ))

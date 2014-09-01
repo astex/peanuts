@@ -14,3 +14,7 @@ class BaseRestController(object):
     def index(self, get_data):
         """Returns a list of models based on filters in get_data."""
         return db.session.query(self.Model).all()
+
+    def get(self, id_, get_data):
+        """Retuns a single object based on filters in get_data."""
+        return db.session.query(self.Model).get(id_)

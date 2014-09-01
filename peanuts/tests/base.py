@@ -13,7 +13,6 @@ __all__ = ['RestTestCase']
 class RestTestCase(TestCase):
     """A base test case for RESTful views."""
     base_url = ''
-    models = []
 
     def create_app(self):
         """Creates the application object."""
@@ -22,9 +21,6 @@ class RestTestCase(TestCase):
     def setUp(self):
         """Creates the database and requisite models."""
         db.create_all()
-        for model in self.models:
-            db.session.add(model)
-        db.session.commit()
 
     def tearDown(self):
         """Drops the (data)base."""
@@ -40,11 +36,12 @@ class RestTestCase(TestCase):
             })
         return self.client.get(url, **kargs)
 
-    # The following methods must be included manually as test_[method] for
-    #   pytest to pick them up.
-
-    def _test_index(self):
+    def _test_index(self, models):
         """Tests the index endpoint of a given view."""
+        for model in models:
+            db.session.add(model)
+        db.session.commit()
+
         r = self.get(self.base_url + '/', query_string={'verbosity': 'all'})
         assert r.status_code == 200
         assert 'data' in r.json
@@ -52,3 +49,19 @@ class RestTestCase(TestCase):
         data = r.json['data']
         assert len(data) > 0
         assert all(['id' in d for d in data])
+
+    def _test_get(self, model):
+        """Tests the get endpoint of a given view."""
+        db.session.add(model)
+        db.session.commit()
+
+        id_ = str(model.id)
+        r = self.get(
+            self.base_url + '/' + id_,
+            query_string={'verbosity': 'all'}
+            )
+        assert r.status_code == 200
+        assert 'data' in r.json
+
+        data = r.json['data']
+        assert data['id'] == id_
