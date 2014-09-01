@@ -40,3 +40,10 @@ class PostTest(RestTestCase):
         super(PostTest, self)._test_post(
             {'content': 'This is a posting.'}
             )
+
+    def test_put(self):
+        """Tests /post/<id> PUT."""
+        super(PostTest, self)._test_put(
+            Post(content='This is a posting.'),
+            {'content': 'This is an edited posting.'}
+            )

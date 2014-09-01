@@ -45,19 +45,16 @@ class BaseRestView(FlaskView):
 
     def index(self):
         """Gets a list of objects from the controller."""
-        return self.jsonify(self.controller.index(
-            request.args
-            ))
+        return self.jsonify(self.controller.index(request.args))
 
     def get(self, id_):
         """Gets an individual object from the controller."""
-        return self.jsonify(self.controller.get(
-            int(id_),
-            request.args
-            ))
+        return self.jsonify(self.controller.get(int(id_)))
 
     def post(self):
         """Posts a new object to the controller."""
-        return self.jsonify(self.controller.post(
-            self.data
-            )), 201
+        return self.jsonify(self.controller.post(self.data)), 201
+
+    def put(self, id_):
+        """Updates an existing model with new data."""
+        return self.jsonify(self.controller.put(int(id_), self.data))

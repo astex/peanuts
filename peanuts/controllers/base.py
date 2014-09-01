@@ -18,19 +18,23 @@ class BaseRestController(object):
 
         return db.session.query(self.Model).all()
 
-    def get(self, id_, filter_data=None):
+    def get(self, id_):
         """Retuns a single object based on filters in filter_data."""
-        if filter_data is None:
-            filter_data = {}
-
         return db.session.query(self.Model).get(id_)
 
-    def post(self, post_data, filter_data=None):
+    def post(self, post_data):
         """Posts a new object and returns it."""
-        if filter_data is None:
-            filter_data = {}
-
         model = self.Model(**post_data)
+        db.session.add(model)
+        db.session.commit()
+
+        return model
+
+    def put(self, id_, post_data):
+        """Updates an existing object with new data."""
+        model = db.session.query(self.Model).get(id_)
+        for key in post_data:
+            setattr(model, key, post_data[key])
         db.session.add(model)
         db.session.commit()
 

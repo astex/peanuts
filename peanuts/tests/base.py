@@ -46,6 +46,17 @@ class RestTestCase(TestCase):
             })
         return self.client.post(url, **kargs)
 
+    def put(self, url, **kargs):
+        """A wrapper for TestClient.post()."""
+        kargs.update({
+            'headers': [
+                ('accepts', 'application/json; charset=utf-8'),
+                ('content-type', 'application/json; charset=utf-8')
+                ],
+            'data': json.dumps(kargs.get('data', {}))
+            })
+        return self.client.put(url, **kargs)
+
     def _test_index(self, models):
         """Tests the index endpoint of a given view."""
         for model in models:
@@ -88,3 +99,20 @@ class RestTestCase(TestCase):
 
         data = r.json['data']
         assert 'id' in data
+
+    def _test_put(self, model, model_dict):
+        """Tests the put endpoint of a given view."""
+        db.session.add(model)
+        db.session.commit()
+
+        id_ = str(model.id)
+        r = self.put(
+            self.base_url + '/' + id_,
+            query_string={'verbosity': 'all'},
+            data=model_dict
+            )
+        assert r.status_code == 200
+        assert 'data' in r.json
+
+        data = r.json['data']
+        assert data['id'] == id_
