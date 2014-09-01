@@ -15,9 +15,11 @@ def create_app(config):
     from peanuts.database import db
     db.init_app(app)
 
-    # This must be executed after all views have been registered so that all 
-    #   requirsite models have been imported.
+    from peanuts import views
+    views.register(app)
+
     with app.app_context():
+        from peanuts.models.post import Post
         db.create_all()
 
     return app
