@@ -3,7 +3,7 @@
 """
 
 
-from flask import request, jsonify
+from flask import request, jsonify, json
 from flask.ext.classy import FlaskView
 
 
