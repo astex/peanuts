@@ -12,4 +12,7 @@ def create_app(config):
     app = Flask(__name__)
     app.config.from_pyfile(config)
 
+    from peanuts.database import db
+    db.init_app(app)
+
     return app
