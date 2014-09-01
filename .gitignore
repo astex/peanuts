@@ -35,3 +35,7 @@ nosetests.xml
 .pydevproject
 .idea
 .settings
+
+# Database
+peanuts.db
+peanuts-test.db
