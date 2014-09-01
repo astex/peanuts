@@ -1,6 +1,7 @@
 """Base class(es) for performing unit tests."""
 
 
+from flask import json
 from flask.ext.testing import TestCase
 
 from peanuts import create_app
@@ -28,13 +29,22 @@ class RestTestCase(TestCase):
         db.drop_all()
 
     def get(self, url, **kargs):
-        """A wrapper for Session.get() which appends the base_url and
-            metadata.
-        """
+        """A wrapper for TestClient.get()."""
         kargs.update({
             'headers': [('accepts','application/json; charset=utf-8')]
             })
         return self.client.get(url, **kargs)
+
+    def post(self, url, **kargs):
+        """A wrapper for TestClient.post()."""
+        kargs.update({
+            'headers': [
+                ('accepts', 'application/json; charset=utf-8'),
+                ('content-type', 'application/json; charset=utf-8')
+                ],
+            'data': json.dumps(kargs.get('data', {}))
+            })
+        return self.client.post(url, **kargs)
 
     def _test_index(self, models):
         """Tests the index endpoint of a given view."""
@@ -65,3 +75,16 @@ class RestTestCase(TestCase):
 
         data = r.json['data']
         assert data['id'] == id_
+
+    def _test_post(self, model_dict):
+        """Tests the post endpoint of a given view."""
+        r = self.post(
+            self.base_url + '/',
+            query_string={'verbosity': 'all'},
+            data=model_dict
+            )
+        assert r.status_code == 201
+        assert 'data' in r.json
+
+        data = r.json['data']
+        assert 'id' in data

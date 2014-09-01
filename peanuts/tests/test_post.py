@@ -34,3 +34,9 @@ class PostTest(RestTestCase):
         super(PostTest, self)._test_get(
             Post(content='This is a posting.')
             )
+
+    def test_post(self):
+        """Tests /post/ POST."""
+        super(PostTest, self)._test_post(
+            {'content': 'This is a posting.'}
+            )
