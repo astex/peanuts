@@ -17,7 +17,7 @@ class RestTestCase(TestCase):
 
     def create_app(self):
         """Creates the application object."""
-        return create_app('../config/test.py')
+        return create_app('config/test.py')
 
     def setUp(self):
         """Creates the database and requisite models."""
