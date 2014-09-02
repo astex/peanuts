@@ -107,6 +107,10 @@ class RestTestCase(TestCase):
         data = r.json['data']
         assert 'id' in data
 
+        id_ = data['id']
+        model = db.session.query(self.Model).get(id_)
+        assert model
+
     def _test_put(self, model, model_dict):
         """Tests the put endpoint of a given view."""
         db.session.add(model)
@@ -132,3 +136,6 @@ class RestTestCase(TestCase):
         id_ = str(model.id)
         r = self.delete(self.base_url + '/' + id_)
         assert r.status_code == 204
+
+        model = db.session.query(self.Model).get(id_)
+        assert not model

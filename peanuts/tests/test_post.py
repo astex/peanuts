@@ -11,6 +11,7 @@ __all__ = ['PostTest']
 class PostTest(RestTestCase):
     """A unit test for Posts."""
     base_url = '/post'
+    Model = Post
 
     def test_index(self):
         """Tests /post/ GET."""
