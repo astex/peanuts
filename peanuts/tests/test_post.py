@@ -47,3 +47,9 @@ class PostTest(RestTestCase):
             Post(content='This is a posting.'),
             {'content': 'This is an edited posting.'}
             )
+
+    def test_delete(self):
+        """Tests /posts/<id> DELETE."""
+        super(PostTest, self)._test_delete(
+            Post(content='This is a posting.')
+            )

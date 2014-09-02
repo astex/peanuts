@@ -36,11 +36,16 @@ class BaseRestView(FlaskView):
         return jsonify(
             data=[
                 d.get_dictionary(self.verbosity)
+                if hasattr(d, 'get_dictionary') else
+                d
                 for d in data
                 ] if isinstance(data, list) else
-                data.get_dictionary(self.verbosity),
+                data.get_dictionary(self.verbosity)
+                if hasattr(data, 'get_dictionary') else
+                data,
             verbosity=self.verbosity,
-            url=request.url
+            url=request.url,
+            method=request.method
             )
 
     def index(self):
@@ -58,3 +63,8 @@ class BaseRestView(FlaskView):
     def put(self, id_):
         """Updates an existing model with new data."""
         return self.jsonify(self.controller.put(int(id_), self.data))
+
+    def delete(self, id_):
+        """Deletes an existing model."""
+        self.controller.delete(int(id_))
+        return self.jsonify({}), 204

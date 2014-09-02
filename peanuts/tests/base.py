@@ -47,7 +47,7 @@ class RestTestCase(TestCase):
         return self.client.post(url, **kargs)
 
     def put(self, url, **kargs):
-        """A wrapper for TestClient.post()."""
+        """A wrapper for TestClient.put()."""
         kargs.update({
             'headers': [
                 ('accepts', 'application/json; charset=utf-8'),
@@ -56,6 +56,13 @@ class RestTestCase(TestCase):
             'data': json.dumps(kargs.get('data', {}))
             })
         return self.client.put(url, **kargs)
+
+    def delete(self, url, **kargs):
+        """A wrapper for TestClient.delete()."""
+        kargs.update({
+            'headers': [('accepts', 'application/json; charset=utf-8')]
+            })
+        return self.client.delete(url, **kargs)
 
     def _test_index(self, models):
         """Tests the index endpoint of a given view."""
@@ -116,3 +123,12 @@ class RestTestCase(TestCase):
 
         data = r.json['data']
         assert data['id'] == id_
+
+    def _test_delete(self, model):
+        """Tests the delete endpoint of a given view."""
+        db.session.add(model)
+        db.session.commit()
+
+        id_ = str(model.id)
+        r = self.delete(self.base_url + '/' + id_)
+        assert r.status_code == 204
