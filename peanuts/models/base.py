@@ -1,7 +1,7 @@
 """Abstract base model class(es)."""
 
 
-from peanuts.database import db
+from peanuts.lib.database import db
 
 
 __all__ = ['Model']

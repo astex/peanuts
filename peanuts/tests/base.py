@@ -5,7 +5,7 @@ from flask import json
 from flask.ext.testing import TestCase
 
 from peanuts import create_app
-from peanuts.database import db
+from peanuts.lib.database import db
 
 
 __all__ = ['RestTestCase']

@@ -2,7 +2,7 @@
 
 from flask import request
 
-from peanuts.database import db
+from peanuts.lib.database import db
 
 
 __all__ = ['BaseRestController']
