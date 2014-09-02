@@ -76,14 +76,14 @@ class RestTestCase(TestCase):
 
         data = r.json['data']
         assert len(data) > 0
-        assert all(['id' in d for d in data])
+        assert all(['id_' in d for d in data])
 
     def _test_get(self, model):
         """Tests the get endpoint of a given view."""
         db.session.add(model)
         db.session.commit()
 
-        id_ = str(model.id)
+        id_ = str(model.id_)
         r = self.get(
             self.base_url + '/' + id_,
             query_string={'verbosity': 'all'}
@@ -92,7 +92,8 @@ class RestTestCase(TestCase):
         assert 'data' in r.json
 
         data = r.json['data']
-        assert data['id'] == id_
+        assert 'id_' in data
+        assert data['id_'] == id_
 
     def _test_post(self, model_dict):
         """Tests the post endpoint of a given view."""
@@ -105,9 +106,9 @@ class RestTestCase(TestCase):
         assert 'data' in r.json
 
         data = r.json['data']
-        assert 'id' in data
+        assert 'id_' in data
 
-        id_ = data['id']
+        id_ = data['id_']
         model = db.session.query(self.Model).get(id_)
         assert model
 
@@ -116,7 +117,7 @@ class RestTestCase(TestCase):
         db.session.add(model)
         db.session.commit()
 
-        id_ = str(model.id)
+        id_ = str(model.id_)
         r = self.put(
             self.base_url + '/' + id_,
             query_string={'verbosity': 'all'},
@@ -126,14 +127,14 @@ class RestTestCase(TestCase):
         assert 'data' in r.json
 
         data = r.json['data']
-        assert data['id'] == id_
+        assert data['id_'] == id_
 
     def _test_delete(self, model):
         """Tests the delete endpoint of a given view."""
         db.session.add(model)
         db.session.commit()
 
-        id_ = str(model.id)
+        id_ = str(model.id_)
         r = self.delete(self.base_url + '/' + id_)
         assert r.status_code == 204
 
