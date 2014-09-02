@@ -19,7 +19,6 @@ def create_app(config):
     views.register(app)
 
     with app.app_context():
-        from peanuts.models.post import Post
         db.create_all()
 
     return app
