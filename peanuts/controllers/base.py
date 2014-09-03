@@ -1,11 +1,11 @@
 """Base controller(s) which take in a dictionary and return a model."""
 
-from flask import request
+from flask import request, session
 
 from peanuts.lib.database import db
 
 
-__all__ = ['BaseRestController']
+__all__ = ['BaseController', 'BaseRestController']
 
 
 class BaseController(object):
@@ -13,6 +13,7 @@ class BaseController(object):
     def __init__(self):
         self.request = request
         self.db_session = db.session
+        self.session = session
 
     def commit(self):
         """A wrapper for database commits which rolls them back if they fail.
