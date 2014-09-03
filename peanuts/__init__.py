@@ -21,4 +21,7 @@ def create_app(config):
     with app.app_context():
         db.create_all()
 
+    from peanuts.lib.session import PeanutsSessionInterface
+    app.session_interface = PeanutsSessionInterface()
+
     return app
