@@ -1,18 +1,21 @@
-"""Base view(s) which parse a model from a controller into a request and a 
+"""Base view(s) which parse a model from a controller into a request and a
     request into a dictionary for the controller.
 """
 
 
-from flask import request, jsonify, json
+from flask import request, jsonify
 from flask.ext.classy import FlaskView
 
 
-__all__ = ['BaseRestView']
+__all__ = ['BaseView', 'BaseRestView']
 
 
-class BaseRestView(FlaskView):
+class BaseView(FlaskView):
     """A base class for RESTful views."""
     Controller = None
+
+    def __init__(self):
+        self.request = request
 
     @property
     def controller(self):
@@ -20,37 +23,41 @@ class BaseRestView(FlaskView):
         return self.Controller()
 
     @property
+    def data(self):
+        """The request data."""
+        return self.request.get_json()
+
+    @property
     def verbosity(self):
         """The verbosity of the return dictionary as dictated by the url
             parameter.
         """
-        return request.args.get('verbosity', 'none')
-
-    @property
-    def data(self):
-        """The request data."""
-        return request.get_json()
+        return self.request.args.get('verbosity', 'none')
 
     def jsonify(self, data):
         """Makes a nice json response."""
         return jsonify(
-            data=[
-                d.get_dictionary(self.verbosity)
-                if hasattr(d, 'get_dictionary') else
-                d
-                for d in data
-                ] if isinstance(data, list) else
+            data=(
+                [
+                    d.get_dictionary(self.verbosity)
+                    if hasattr(d, 'get_dictionary') else
+                    d
+                    for d in data
+                    ] if isinstance(data, list) else
                 data.get_dictionary(self.verbosity)
                 if hasattr(data, 'get_dictionary') else
-                data,
+                data
+                ),
             verbosity=self.verbosity,
-            url=request.url,
-            method=request.method
+            url=self.request.url,
+            method=self.request.method
             )
 
+class BaseRestView(BaseView):
+    """A base class for RESTful views."""
     def index(self):
         """Gets a list of objects from the controller."""
-        return self.jsonify(self.controller.index(request.args))
+        return self.jsonify(self.controller.index(self.request.args))
 
     def get(self, id_):
         """Gets an individual object from the controller."""
