@@ -95,11 +95,12 @@ class RestTestCase(TestCase):
         assert 'id' in data
         assert data['id'] == id_
 
-    def _test_post(self, model_dict):
+    def _test_post(self, model_dict, **kargs):
         """Tests the post endpoint of a given view."""
+        kargs.setdefault('verbosity', 'all')
         r = self.post(
             self.base_url + '/',
-            query_string={'verbosity': 'all'},
+            query_string=kargs,
             data=model_dict
             )
         assert r.status_code == 201
