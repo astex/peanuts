@@ -25,6 +25,8 @@ class Model(db.Model):
                     (default='all')
         """
         return dict([
-                (c.name, str(getattr(self, c.name)))
-                for c in self.__table__.columns
+            # This maps the model to its columns except for id, for which the
+            #   database mapping and python mapping differ.
+            (c.name, str(getattr(self, c.name if c.name != 'id' else 'id_')))
+            for c in self.__table__.columns
             ]) if verbosity == 'all' else {}

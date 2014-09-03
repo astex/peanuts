@@ -76,7 +76,7 @@ class RestTestCase(TestCase):
 
         data = r.json['data']
         assert len(data) > 0
-        assert all(['id_' in d for d in data])
+        assert all(['id' in d for d in data])
 
     def _test_get(self, model):
         """Tests the get endpoint of a given view."""
@@ -92,8 +92,8 @@ class RestTestCase(TestCase):
         assert 'data' in r.json
 
         data = r.json['data']
-        assert 'id_' in data
-        assert data['id_'] == id_
+        assert 'id' in data
+        assert data['id'] == id_
 
     def _test_post(self, model_dict):
         """Tests the post endpoint of a given view."""
@@ -106,9 +106,9 @@ class RestTestCase(TestCase):
         assert 'data' in r.json
 
         data = r.json['data']
-        assert 'id_' in data
+        assert 'id' in data
 
-        id_ = data['id_']
+        id_ = data['id']
         model = db.session.query(self.Model).get(id_)
         assert model
 
@@ -127,7 +127,7 @@ class RestTestCase(TestCase):
         assert 'data' in r.json
 
         data = r.json['data']
-        assert data['id_'] == id_
+        assert data['id'] == id_
 
     def _test_delete(self, model):
         """Tests the delete endpoint of a given view."""
