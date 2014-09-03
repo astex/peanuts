@@ -27,8 +27,16 @@ class User(Model):
         nullable=False
         )
 
-    data = db.relationship('UserData', backref='user')
-    peanuts_auth = db.relationship('PeanutsAuth', backref='user')
+    data = db.relationship(
+        'UserData',
+        backref='user',
+        uselist=False
+        )
+    peanuts_auth = db.relationship(
+        'PeanutsAuth',
+        backref='user',
+        uselist=False
+        )
 
     def get_dictionary(self, verbosity='none'):
         """User dictionaries do and should vary based on the user accessing the
@@ -97,7 +105,7 @@ class UserData(Model):
     last_name = db.Column(db.UnicodeText)
 
     # A public-facing display name to show on posts.
-    user_name = db.Column(db.Unicode(255))
+    user_name = db.Column(db.Unicode(255), unique=True)
 
 class PeanutsAuth(Model):
     """A basic authentication provider for peanuts."""
