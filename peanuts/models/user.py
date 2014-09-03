@@ -1,6 +1,7 @@
 """Models for dealing with users and different authentication providers."""
 
 import bcrypt
+from enum import IntEnum
 from datetime import datetime
 
 from peanuts.lib.database import db
@@ -15,6 +16,12 @@ class User(Model):
     """
     __tablename__ = 'user'
 
+    class Verbosity(IntEnum):
+        none = 0
+        other = 1
+        self = 2
+        admin = 3
+
     id_ = db.Column('id', db.Integer, primary_key=True)
     created = db.Column(
         db.DateTime,
@@ -27,15 +34,19 @@ class User(Model):
         nullable=False
         )
 
+    is_admin = db.Column(db.Boolean, default=False)
+
     data = db.relationship(
         'UserData',
+        uselist=False,
         backref='user',
-        uselist=False
+        cascade='save-update'
         )
     peanuts_auth = db.relationship(
         'PeanutsAuth',
+        uselist=False,
         backref='user',
-        uselist=False
+        cascade='save-update'
         )
 
     def get_dictionary(self, verbosity='none'):
@@ -45,23 +56,19 @@ class User(Model):
         """
         # The verbosity here is hierarchical by nature, so we enumerate it via
         #   the following dict.
-        verbosity = {
-            'none': 0,
-            'other': 1,
-            'self': 2,
-            'admin': 3
-            }.get(verbosity, -1)
+        verbosity = getattr(self.Verbosity, verbosity, -1)
 
         d = {}
 
-        if verbosity <= 0:
+        if verbosity <= self.Verbosity.none:
             return d
 
         d.update({
+            'id': self.id_,
             'user_name': self.data.user_name
             })
 
-        if verbosity <= 1:
+        if verbosity <= self.Verbosity.other:
             return d
 
         d.update({
@@ -72,7 +79,7 @@ class User(Model):
             'last_login': self.last_login
             })
 
-        if verbosity <= 2:
+        if verbosity <= self.Verbosity.self:
             return d
 
         d.update({
@@ -87,9 +94,8 @@ class UserData(Model):
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey('user.id'),
-        primary_key=True,
-        ondelete='CASCADE'
+        db.ForeignKey('user.id', ondelete='CASCADE'),
+        primary_key=True
         )
 
     updated = db.Column(
@@ -113,9 +119,8 @@ class PeanutsAuth(Model):
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey('user.id'),
-        primary_key=True,
-        ondelete='CASCADE'
+        db.ForeignKey('user.id', ondelete='CASCADE'),
+        primary_key=True
         )
 
     # This may or may not differ from UserData.email and should be used
@@ -123,7 +128,7 @@ class PeanutsAuth(Model):
     email = db.Column(db.Unicode(255), index=True, unique=True)
 
     # This should be a bcrypt hash.
-    _password = db.Column('password', db.Unicode(60))
+    _password = db.Column('password', db.Binary(60))
 
     @property
     def password(self):
@@ -133,7 +138,10 @@ class PeanutsAuth(Model):
     @password.setter
     def password(self, value):
         """Sets the password to a bcrypted hash."""
-        self._password = bcrypt.hashpw(value, bcrypt.gensalt())
+        self._password = bcrypt.hashpw(
+            value.encode('utf-8'),
+            bcrypt.gensalt()
+            )
 
     def has_password(self, password):
         """Checks if the user has the provided password."""

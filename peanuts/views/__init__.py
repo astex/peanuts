@@ -1,5 +1,6 @@
-from peanuts.views.post import PostView
+from peanuts.views import post, user
 
 
 def register(app):
-    PostView.register(app, route_base='/post/')
+    post.PostView.register(app, route_base='/post/')
+    user.UserView.register(app, route_base='/user/')
