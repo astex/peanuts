@@ -14,7 +14,7 @@ class Post(Model):
     """A basic posting."""
     __tablename__ = 'post'
 
-    id_ = db.Column(db.Integer, primary_key=True)
+    id_ = db.Column('id', db.Integer, primary_key=True)
     created = db.Column(
         db.DateTime,
         default=datetime.utcnow,
