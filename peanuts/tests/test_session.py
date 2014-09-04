@@ -15,3 +15,8 @@ class SessionTest(RestTestCase):
         """Tests that the /session/ GET endpoint 401s if not logged in."""
         r = self.get(self.base_url + '/')
         assert r.status_code == 401
+
+    def test_delete_401(self):
+        """Tests that the /session/ DELETE endpoint 401s if not logged in."""
+        r = self.delete(self.base_url + '/')
+        assert r.status_code == 401
