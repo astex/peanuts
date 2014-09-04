@@ -24,9 +24,7 @@ class SessionTest(BaseTestCase):
             email='test@example.org',
             password=password
             )
-        user = User(
-            peanuts_auth=peanuts_auth
-            )
+        user = User(peanuts_auth=peanuts_auth)
 
         self.db_session.add(user)
         self.commit()
@@ -46,6 +44,27 @@ class SessionTest(BaseTestCase):
         r = self.delete(self.base_url + '/')
         assert r.status_code == 401
 
+    def test_delete(self):
+        """Tests /session/ DELETE."""
+        password = '123abc'
+        peanuts_auth = PeanutsAuth(
+            email='test@example.org',
+            password=password
+            )
+        user = User(peanuts_auth=peanuts_auth)
+
+        self.db_session.add(user)
+        self.commit()
+
+        self.login('peanuts', user, password)
+
+        r = self.delete(self.base_url + '/')
+        assert r.status_code == 200
+
+        # Confirm the logout.
+        r = self.get(self.base_url + '/')
+        assert r.status_code == 401
+
 class AuthPeanutsTest(BaseTestCase):
     """A unit test to create a peanuts user."""
     def test_post(self):
@@ -55,9 +74,7 @@ class AuthPeanutsTest(BaseTestCase):
             email='test@example.org',
             password=password
             )
-        user = User(
-            peanuts_auth=peanuts_auth
-            )
+        user = User(peanuts_auth=peanuts_auth)
 
         self.db_session.add(user)
         self.commit()
