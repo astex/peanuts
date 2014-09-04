@@ -19,6 +19,13 @@ class BaseTestCase(TestCase):
         self.db_session = db.session
         super(BaseTestCase, self).__init__(*args, **kargs)
 
+    def commit(self):
+        """Rolls back database commits if they fail."""
+        try:
+            self.db_session.commit()
+        except:
+            self.db_session.rollback()
+
     def create_app(self):
         """Creates the application object."""
         return create_app('config/test.py')
