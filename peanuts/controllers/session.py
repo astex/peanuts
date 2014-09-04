@@ -1,7 +1,10 @@
 """Controller(s) for dealing with authentication and the session object."""
 
 
+from werkzeug.exceptions import BadRequest
+
 from peanuts.controllers.base import BaseController
+from peanuts.models.user import PeanutsAuth
 
 
 __all__ = ['SessionController']
@@ -16,3 +19,29 @@ class SessionController(BaseController):
     def delete(self):
         """Clears the session (logs out)."""
         self.session.clear()
+
+class AuthPeanutsController(BaseController):
+    """The controller for auth peanuts sessions."""
+    def post(self, data):
+        """Populates a peanuts session (logs in)."""
+        email = data.get('email')
+        password = data.get('password')
+
+        if not email or not password:
+            raise BadRequest('Email and password are required.')
+
+        auth_peanuts = self.db_session.query(PeanutsAuth).filter(
+            PeanutsAuth.email == email
+            ).first()
+
+        if not auth_peanuts:
+            raise BadRequest('There is no peanuts user with that email.')
+
+        if not auth_peanuts.has_password(password):
+            raise BadRequest('That password is incorrect.')
+
+        self.session.clear()
+        self.session['user_id'] = auth_peanuts.user_id
+        self.session.permanent = data.get('stay_logged_in')
+
+        return self.session.public_dict

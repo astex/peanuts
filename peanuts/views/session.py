@@ -5,8 +5,9 @@ from flask.ext.classy import route
 
 from peanuts.lib.auth import needs, login_need
 from peanuts.views.base import BaseView
-from peanuts.controllers.session import SessionController
-
+from peanuts.controllers.session import (
+    SessionController, AuthPeanutsController
+    )
 
 __all__ = ['SessionView']
 
@@ -26,3 +27,11 @@ class SessionView(BaseView):
     def delete(self):
         """Deletes the current session (logs out a user)."""
         return self.jsonify(self.controller.delete())
+
+class AuthPeanutsView(BaseView):
+    """The view for authenticating a peanuts session."""
+    Controller = AuthPeanutsController
+
+    def post(self):
+        """Posts a new session via auth peanuts (logs in)."""
+        return self.jsonify(self.controller.post(self.data))

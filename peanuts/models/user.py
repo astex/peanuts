@@ -145,7 +145,10 @@ class PeanutsAuth(Model):
 
     def has_password(self, password):
         """Checks if the user has the provided password."""
-        return bcrypt.hashpw(password, self.password) == self.password
+        return bcrypt.hashpw(
+            password.encode('utf-8'),
+            self.password
+            ) == self.password
 
     def get_dictionary(self, verbosity='none'):
         """Auth providers should generally not display any information directly
