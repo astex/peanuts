@@ -22,7 +22,11 @@ class PeanutsSession(dict, SessionMixin):
         """The user, taken from the database, if it exists."""
         from peanuts.lib.database import db
         from peanuts.models.user import User
-        return db.session.query(User).get(self.get('user_id'))
+        user_id = self.get('user_id')
+        if user_id:
+            return db.session.query(User).get(user_id)
+        else:
+            return None
 
     @property
     def public_dict(self):
