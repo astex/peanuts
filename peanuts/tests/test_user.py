@@ -20,3 +20,12 @@ class UserTest(RestTestCase):
             'password': '123abc',
             'confirm_password': '123abc'
             }, verbosity='self')
+
+        r = self.client.get('/session/', headers=[
+            ('accepts', 'application/json; charset=utf-8')
+            ])
+        assert r.status_code == 200
+        assert 'data' in r.json
+
+        data = r.json['data']
+        assert 'user_id' in data

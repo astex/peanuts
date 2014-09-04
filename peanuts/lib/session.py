@@ -27,7 +27,7 @@ class PeanutsSession(dict, SessionMixin):
     @property
     def public_dict(self):
         """The dictionary to actually display."""
-        return self.get('user_id')
+        return {'user_id': self.get('user_id')}
 
     @property
     def serialized(self):
