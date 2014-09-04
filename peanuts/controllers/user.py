@@ -40,19 +40,15 @@ class UserController(BaseRestController):
             last_name=post_data.get('last_name'),
             user_name=post_data.get('user_name')
             )
-
         peanuts_auth = PeanutsAuth(
-            email=email
+            email=email,
+            password=password
             )
-        # This is set after the fact in order to use the property rather than
-        #   the default setter.
-        peanuts_auth.password = password
-
         user = User(
             is_admin=post_data.get('is_admin'),
+            data=user_data,
+            peanuts_auth=peanuts_auth
             )
-        user.data = user_data
-        user.peanuts_auth = peanuts_auth
 
         self.db_session.add(user)
         self.commit()
