@@ -1,6 +1,8 @@
 """Controller(s) for dealing with authentication and the session object."""
 
 
+from datetime import datetime
+
 from werkzeug.exceptions import BadRequest
 
 from peanuts.controllers.base import BaseController
@@ -43,5 +45,10 @@ class AuthPeanutsController(BaseController):
         self.session.clear()
         self.session['user_id'] = auth_peanuts.user_id
         self.session.permanent = data.get('stay_logged_in')
+
+        # Update last_login.
+        self.session.user.last_login = datetime.utcnow()
+        self.db_session.add(self.session.user)
+        self.commit()
 
         return self.session.public_dict
