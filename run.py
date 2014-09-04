@@ -4,4 +4,6 @@
 from peanuts import create_app
 
 app = create_app('config/main.py')
-app.run()
+
+if __name__ == '__main__':
+    app.run()
