@@ -6,6 +6,7 @@ from flask.ext.testing import TestCase
 
 from peanuts import create_app
 from peanuts.lib.database import db
+from peanuts.tests.data import Fixtures
 
 
 __all__ = ['BaseTestCase', 'RestTestCase']
@@ -17,14 +18,16 @@ class BaseTestCase(TestCase):
 
     def __init__(self, *args, **kargs):
         self.db_session = db.session
+        self.data = Fixtures(self.db_session)
         super(BaseTestCase, self).__init__(*args, **kargs)
 
     def commit(self):
         """Rolls back database commits if they fail."""
         try:
             self.db_session.commit()
-        except:
+        except Exception as e:
             self.db_session.rollback()
+            raise e
 
     def create_app(self):
         """Creates the application object."""
