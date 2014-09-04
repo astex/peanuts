@@ -75,6 +75,16 @@ class BaseTestCase(TestCase):
             })
         return self.client.delete(url, **kargs)
 
+    def login(self, provider, user, password):
+        """Logs in a user via a given auth provider."""
+        if provider == 'peanuts':
+            return self.post('/session/peanuts/', data={
+                'email': user.peanuts_auth.email,
+                'password': password
+                })
+        else:
+            raise ValueError('Please use a valid provider.')
+
 class RestTestCase(BaseTestCase):
     """A base test case for RESTful views."""
     def _test_index(self, models):
