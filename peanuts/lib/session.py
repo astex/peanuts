@@ -10,6 +10,11 @@ __all__ = ['PeanutsSessionInterface']
 
 class PeanutsSession(dict, SessionMixin):
     """A custom session object for use with peanuts."""
+    def __init__(self, data=None):
+        """Initializes the cookie from serialized data if there is any."""
+        if data:
+            self.unserialize(data)
+
     @property
     def user(self):
         """The user, taken from the database, if it exists."""
@@ -24,8 +29,12 @@ class PeanutsSession(dict, SessionMixin):
 
     @property
     def serialized(self):
-        """Cookies can't store dicts..."""
+        """Serialize the data in a secure way."""
         return json.dumps(dict(self))
+
+    def unserialize(self, data):
+        """Unserialize the data in a secure way."""
+        self.update(json.loads(data))
 
 class PeanutsSessionInterface(SessionInterface):
     """A custom session interface for use with peanuts."""
