@@ -1,6 +1,8 @@
 """A library for dealing with session-based authentication."""
 
 
+from werkzeug.exceptions import SecurityError
+
 from flask import json
 from flask.sessions import SessionMixin, SessionInterface
 
@@ -34,7 +36,10 @@ class PeanutsSession(dict, SessionMixin):
 
     def unserialize(self, data):
         """Unserialize the data in a secure way."""
-        self.update(json.loads(data))
+        try:
+            self.update(json.loads(data))
+        except (ValueError, TypeError):
+            SecurityError('That is not a valid cookie.')
 
 class PeanutsSessionInterface(SessionInterface):
     """A custom session interface for use with peanuts."""
