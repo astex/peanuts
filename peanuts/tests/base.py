@@ -8,12 +8,16 @@ from peanuts import create_app
 from peanuts.lib.database import db
 
 
-__all__ = ['RestTestCase']
+__all__ = ['BaseTestCase', 'RestTestCase']
 
 
-class RestTestCase(TestCase):
-    """A base test case for RESTful views."""
+class BaseTestCase(TestCase):
+    """A base test case."""
     base_url = ''
+
+    def __init__(self, *args, **kargs):
+        self.db_session = db.session
+        super(BaseTestCase, self).__init__(*args, **kargs)
 
     def create_app(self):
         """Creates the application object."""
@@ -64,6 +68,8 @@ class RestTestCase(TestCase):
             })
         return self.client.delete(url, **kargs)
 
+class RestTestCase(BaseTestCase):
+    """A base test case for RESTful views."""
     def _test_index(self, models):
         """Tests the index endpoint of a given view."""
         for model in models:

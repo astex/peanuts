@@ -1,13 +1,13 @@
 """Unit tests for sessions (login/logout)."""
 
 
-from peanuts.tests.base import RestTestCase
+from peanuts.tests.base import BaseTestCase
 
 
 __all__ = ['SessionTest']
 
 
-class SessionTest(RestTestCase):
+class SessionTest(BaseTestCase):
     """A unit test for sessions."""
     base_url = '/session'
 
