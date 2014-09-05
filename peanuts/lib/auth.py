@@ -8,7 +8,7 @@ from werkzeug.exceptions import Unauthorized
 
 
 __all__ = [
-    'Need', 'needs', 'no_need', 'login_need', 'no_login_need', 'admin_need'
+    'Need', 'needs', 'no_need', 'login_need', 'admin_need'
     ]
 
 
@@ -132,5 +132,4 @@ class AdminNeed(Need):
 
 no_need = NoNeed()
 login_need = LoginNeed()
-no_login_need = -login_need
 admin_need = AdminNeed()
