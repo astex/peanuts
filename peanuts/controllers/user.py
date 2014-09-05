@@ -3,6 +3,7 @@
 
 from werkzeug.exceptions import BadRequest, Conflict
 
+from peanuts.lib.auth import admin_need
 from peanuts.controllers.base import BaseRestController
 from peanuts.models.user import User, UserData, PeanutsAuth
 
@@ -53,8 +54,10 @@ class UserController(BaseRestController):
         self.db_session.add(user)
         self.commit()
 
-        self.session.clear()
-        self.session['user_id'] = user.id_
-        self.session.permanent = post_data.get('stay_logged_in')
+        # Log the new user in, unless the current user is an admin.
+        if not admin_need():
+            self.session.clear()
+            self.session['user_id'] = user.id_
+            self.session.permanent = post_data.get('stay_logged_in')
 
         return user
