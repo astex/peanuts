@@ -29,6 +29,8 @@ class Post(Model):
         nullable=False
         )
 
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
     # This post is a reply to its parent.
     parent_id = db.Column(
         db.Integer,
@@ -40,6 +42,8 @@ class Post(Model):
 
     content = db.Column(db.UnicodeText, nullable=False)
     state = db.Column(db.Enum('draft', 'posted', 'deleted'), default='draft')
+
+    owner = db.relationship('User')
 
     parent = db.relationship(
         'Post',
