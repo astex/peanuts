@@ -52,10 +52,10 @@ class Need(object):
                 # Do something only the owner of that object should do.
             ```
 
-        Needs can be inverted using the `-` unary operator:
+        Needs can be inverted using the `~` unary operator:
 
             ```
-            with -login_need:
+            with ~login_need:
                 # Do stuff that a logged-in user cannot do.
             ```
 
@@ -79,7 +79,7 @@ class Need(object):
     def __exit__(self, type_, value, traceback):
         pass
 
-    def __neg__(self):
+    def __invert__(self):
         return NegativeNeed(self)
 
     def __and__(self, other):
