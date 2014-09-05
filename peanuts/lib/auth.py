@@ -51,6 +51,13 @@ class Need(object):
             with owner_need:
                 # Do something only the owner of that object should do.
             ```
+
+        Needs can be inverted using the `-` unary operator:
+
+            ```
+            with -login_need:
+                # Do stuff that a logged-in user cannot do.
+            ```
     """
     def __call__(self):
         return self.is_met()
@@ -61,6 +68,9 @@ class Need(object):
 
     def __exit__(self, type_, value, traceback):
         pass
+
+    def __neg__(self):
+        return NegativeNeed(self)
 
     @property
     def session(self):
@@ -75,6 +85,14 @@ class Need(object):
                 (bool) - True if the need is met, False otherwise.
         """
         return True
+
+class NegativeNeed(Need):
+    """A need that returns the opposite of its parent need."""
+    def __init__(self, parent_need):
+        self.parent_need = parent_need
+
+    def is_met(self):
+        return not self.parent_need()
 
 def needs(need):
     """A decorator to handle different needs.
@@ -106,12 +124,6 @@ class LoginNeed(Need):
         """Checks if the user is logged in."""
         return bool(self.session.user)
 
-class NoLoginNeed(Need):
-    """A need that checks that no user is logged in."""
-    def is_met(self):
-        """Checks that no user is logged in."""
-        return not self.session.user
-
 class AdminNeed(Need):
     """A need that checks if the user is an admin."""
     def is_met(self):
@@ -120,5 +132,5 @@ class AdminNeed(Need):
 
 no_need = NoNeed()
 login_need = LoginNeed()
-no_login_need = NoLoginNeed()
+no_login_need = -login_need
 admin_need = AdminNeed()
