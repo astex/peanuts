@@ -1,7 +1,10 @@
 """View(s) for manipulating users."""
 
 
-from peanuts.lib.auth import Need, no_need, login_need, admin_need
+from peanuts.lib.auth import (
+    Need, no_need, login_need, no_login_need, admin_need
+    )
+from peanuts.lib.database import db
 
 from peanuts.models.user import User
 from peanuts.views.base import BaseRestView
@@ -69,8 +72,21 @@ class UserView(BaseRestView):
         verbosity = getattr(User.Verbosity, self.verbosity, -1)
         need = no_need
 
-        if verbosity >= User.Verbosity.admin or self.data.get('is_admin'):
+        # We should be able to create a first admin account regardless of the
+        #   situation.  After that, only an admin may create other admin
+        #   accounts.
+        if (
+                (
+                    verbosity >= User.Verbosity.admin or
+                    self.data.get('is_admin')
+                    ) and
+                db.session.query(db.session.query(User).exists())[0]
+            ):
             need = admin_need
+
+        if not admin_need():
+            need = no_login_need
+
         # There's no need to check SelfNeed or lower since this will log in the
         #   new user if successful.
 
