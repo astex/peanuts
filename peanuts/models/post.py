@@ -28,34 +28,28 @@ class Post(Model):
         onupdate=datetime.utcnow,
         nullable=False
         )
+
+    # This post is a reply to its parent.
+    parent_id = db.Column(
+        db.Integer,
+        db.ForeignKey('post.id', ondelete='CASCADE')
+        )
+
+    # This post is in the same thread as the root.
+    root_id = db.Column(db.Integer, db.ForeignKey('post.id'))
+
     content = db.Column(db.UnicodeText, nullable=False)
     state = db.Column(db.Enum('draft', 'posted', 'deleted'), default='draft')
 
-class PostSubModel(Model):
-    """An abstract base for Post submodels."""
-    __abstract__ = True
-
-    @declared_attr
-    def post(cls):
-        """The relationship to the post."""
-        return db.relationship('Post', backref='data')
-
-class Reply(Model):
-    """A more detailed view of a posting with additional information relevant
-        to replies.
-    """
-    __tablename__ = 'reply'
-
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), primary_key=True)
-    parent_post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
-
-    post = db.relationship(
+    parent = db.relationship(
         'Post',
-        backref='reply_data',
-        primaryjoin='Reply.post_id == Post.id_'
+        primaryjoin='Post.parent_id == Post.id_',
+        foreign_keys='Post.parent_id',
+        remote_side='Post.id_'
         )
-    parent_post = db.relationship(
+    root = db.relationship(
         'Post',
-        backref='replies',
-        primaryjoin='Reply.parent_post_id == Post.id_'
+        primaryjoin='Post.root_id == Post.id_',
+        foreign_keys='Post.root_id',
+        remote_side='Post.id_'
         )
