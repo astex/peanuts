@@ -2,11 +2,14 @@
 
 
 from functools import wraps
+from copy import copy
 
 from werkzeug.exceptions import Unauthorized
 
 
-__all__ = ['Need', 'needs', 'no_need', 'login_need', 'admin_need']
+__all__ = [
+    'Need', 'needs', 'no_need', 'login_need', 'no_login_need', 'admin_need'
+    ]
 
 
 class Need(object):
@@ -103,6 +106,12 @@ class LoginNeed(Need):
         """Checks if the user is logged in."""
         return bool(self.session.user)
 
+class NoLoginNeed(Need):
+    """A need that checks that no user is logged in."""
+    def is_met(self):
+        """Checks that no user is logged in."""
+        return not self.session.user
+
 class AdminNeed(Need):
     """A need that checks if the user is an admin."""
     def is_met(self):
@@ -111,4 +120,5 @@ class AdminNeed(Need):
 
 no_need = NoNeed()
 login_need = LoginNeed()
+no_login_need = NoLoginNeed()
 admin_need = AdminNeed()
