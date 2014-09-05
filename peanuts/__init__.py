@@ -1,4 +1,10 @@
-"""The peanuts backend application."""
+"""The peanuts backend application.
+
+    copyright 2014 Phil Condreay (0astex@gmail.com)
+
+    Peanuts is released under the MIT license.  If a copy of the license was
+    not distributed with this code, see http://opensource.org/licenses/MIT.
+"""
 
 
 from werkzeug.exceptions import default_exceptions
