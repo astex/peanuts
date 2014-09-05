@@ -88,6 +88,10 @@ class BaseTestCase(TestCase):
         else:
             raise ValueError('Please use a valid provider.')
 
+    def logout(self):
+        """Logs out a user."""
+        self.delete('/session/')
+
 class RestTestCase(BaseTestCase):
     """A base test case for RESTful views."""
     def _test_index(self, models):
