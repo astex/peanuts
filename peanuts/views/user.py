@@ -29,6 +29,13 @@ class SelfNeed(Need):
             admin_need()
             )
 
+class NoUserNeed(Need):
+    """A need to check that there are no users."""
+    def is_met(self):
+        return not db.session.query(db.session.query(User).exists()).first()[0]
+
+no_user_need = NoUserNeed()
+
 class UserView(BaseRestView):
     """A view for manipulating users."""
     Controller = UserController
@@ -70,22 +77,17 @@ class UserView(BaseRestView):
             before allowing the posting.
         """
         verbosity = getattr(User.Verbosity, self.verbosity, -1)
-        need = no_need
+
+        # Non-logged-in or admin users may freely create new users.
+        need = admin_need | -login_need
 
         # We should be able to create a first admin account regardless of the
         #   situation.  After that, only an admin may create other admin
         #   accounts.
-        if (
-                (
-                    verbosity >= User.Verbosity.admin or
-                    self.data.get('is_admin')
-                    ) and
-                db.session.query(db.session.query(User).exists())[0]
-            ):
+        if self.data.get('is_admin'):
+            need = admin_need | no_user_need
+        elif verbosity >= User.Verbosity.admin:
             need = admin_need
-
-        if not admin_need():
-            need = -login_need
 
         # There's no need to check SelfNeed or lower since this will log in the
         #   new user if successful.

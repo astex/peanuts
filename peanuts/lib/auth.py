@@ -62,10 +62,10 @@ class Need(object):
         Needs can also be and-ed or or-ed together:
 
             ```
-            with admin_need or -login_need:
+            with admin_need | -login_need:
                 # Do stuff that can't be done while logged in as a normal user.
 
-            with admin_need and owner_need(some_obj):
+            with admin_need & owner_need(some_obj):
                 # Do stuff that can only be done as an admin owner of some_obj.
             ```
     """

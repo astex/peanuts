@@ -39,6 +39,7 @@ class BaseTestCase(TestCase):
 
     def tearDown(self):
         """Drops the (data)base."""
+        self.logout()
         db.session.remove()
         db.drop_all()
 

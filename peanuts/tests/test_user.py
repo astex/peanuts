@@ -42,15 +42,19 @@ class UserTest(RestTestCase):
         """Tests that an admin can post a second admin to /user/ POST and stay
             logged in.
         """
+        password = '123abc'
         r = self.post(self.base_url + '/', data={
             'email': 'test@example.org',
             'password': '123abc',
-            'confirm_password': '123abc',
+            'confirm_password': password,
             'is_admin': True
             }, query_string={'verbosity': 'admin'})
         assert 'data' in r.json
         assert 'id' in r.json['data']
         first_admin_id = r.json['data']['id']
+
+        first_admin = self.db_session.query(self.Model).get(first_admin_id)
+        self.login('peanuts', first_admin, password)
 
         # The first admin is logged in, create a second.
         r = self.post(self.base_url + '/', data={
