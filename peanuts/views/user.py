@@ -2,7 +2,7 @@
 
 
 from peanuts.lib.auth import (
-    Need, no_need, login_need, no_login_need, admin_need
+    Need, no_need, login_need, admin_need
     )
 from peanuts.lib.database import db
 
@@ -85,7 +85,7 @@ class UserView(BaseRestView):
             need = admin_need
 
         if not admin_need():
-            need = no_login_need
+            need = -login_need
 
         # There's no need to check SelfNeed or lower since this will log in the
         #   new user if successful.
