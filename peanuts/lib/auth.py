@@ -75,6 +75,9 @@ class Need(object):
     def __and__(self, other):
         return AndNeed(self, other)
 
+    def __or__(self, other):
+        return OrNeed(self, other)
+
     @property
     def session(self):
         """The flask session."""
@@ -98,13 +101,22 @@ class NegativeNeed(Need):
         return not self.parent_need()
 
 class AndNeed(Need):
-    """A need that returns the combination of two needs."""
+    """A need that returns the combination of two needs using and."""
     def __init__(self, first_need, second_need):
         self.first_need = first_need
         self.second_need = second_need
 
     def is_met(self):
         return self.first_need() and self.second_need()
+
+class OrNeed(Need):
+    """A need that returns the combination or two needs using or."""
+    def __init__(self, first_need, second_need):
+        self.first_need = first_need
+        self.second_need = second_need
+
+    def is_met(self):
+        return self.first_need() or self.second_need()
 
 def needs(need):
     """A decorator to handle different needs.
