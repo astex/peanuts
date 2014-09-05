@@ -58,6 +58,16 @@ class Need(object):
             with -login_need:
                 # Do stuff that a logged-in user cannot do.
             ```
+
+        Needs can also be and-ed or or-ed together:
+
+            ```
+            with admin_need or -login_need:
+                # Do stuff that can't be done while logged in as a normal user.
+
+            with admin_need and owner_need(some_obj):
+                # Do stuff that can only be done as an admin owner of some_obj.
+            ```
     """
     def __call__(self):
         return self.is_met()
