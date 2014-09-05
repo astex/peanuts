@@ -66,3 +66,17 @@ class UserTest(RestTestCase):
         assert 'data' in r.json
         assert 'user_id' in r.json['data']
         assert first_admin_id == r.json['data']['user_id']
+
+    def test_admin_auth(self):
+        """Tests that admin permission is needed to post an admin to
+            /user/ POST normally.
+        """
+        user, password = self.data.peanuts_user
+        self.login('peanuts', user, password)
+        r = self.post(self.base_url + '/', data={
+            'email': 'test2@example.org',
+            'password': '123abc',
+            'confirm_password': '123abc',
+            'is_admin': True
+            })
+        assert r.status_code == 401
