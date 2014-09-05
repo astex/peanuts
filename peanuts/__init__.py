@@ -1,6 +1,7 @@
 """The peanuts backend application."""
 
 
+from werkzeug.exceptions import default_exceptions
 from flask import Flask
 
 
@@ -23,5 +24,9 @@ def create_app(config):
 
     from peanuts.lib.session import PeanutsSessionInterface
     app.session_interface = PeanutsSessionInterface()
+
+    from peanuts.lib.err import make_json_error
+    for code in default_exceptions.keys():
+        app.error_handler_spec[None][code] = make_json_error
 
     return app
