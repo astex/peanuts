@@ -7,9 +7,7 @@ from copy import copy
 from werkzeug.exceptions import Unauthorized
 
 
-__all__ = [
-    'Need', 'needs', 'no_need', 'login_need', 'admin_need'
-    ]
+__all__ = ['Need', 'needs', 'no_need', 'login_need', 'admin_need']
 
 
 class Need(object):
@@ -88,6 +86,9 @@ class Need(object):
     def __or__(self, other):
         return OrNeed(self, other)
 
+    def __xor__(self, other):
+        return XorNeed(self, other)
+
     @property
     def session(self):
         """The flask session."""
@@ -120,13 +121,22 @@ class AndNeed(Need):
         return self.first_need() and self.second_need()
 
 class OrNeed(Need):
-    """A need that returns the combination or two needs using or."""
+    """A need that returns the combination of two needs using or."""
     def __init__(self, first_need, second_need):
         self.first_need = first_need
         self.second_need = second_need
 
     def is_met(self):
         return self.first_need() or self.second_need()
+
+class XorNeed(Need):
+    """A need that returns the combination of two needs using xor."""
+    def __init__(self, first_need, second_need):
+        self.first_need = first_need
+        self.second_need = second_need
+
+    def is_met(self):
+        return self.first_need() != self.second_need()
 
 def needs(need):
     """A decorator to handle different needs.
@@ -148,10 +158,6 @@ def needs(need):
         return decorated
     return adapt
 
-class NoNeed(Need):
-    """The NoNeed is always met."""
-    pass
-
 class LoginNeed(Need):
     """A need that checks basic authentication."""
     def is_met(self):
@@ -164,6 +170,6 @@ class AdminNeed(Need):
         """Checks if the user is an admin."""
         return bool(self.session.user and self.session.user.is_admin)
 
-no_need = NoNeed()
+no_need = Need()
 login_need = LoginNeed()
 admin_need = AdminNeed()

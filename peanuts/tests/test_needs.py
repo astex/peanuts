@@ -31,3 +31,9 @@ class TestNeed(unittest.TestCase):
         assert not (~self.need & self.need)()
         assert not (self.need & ~self.need)()
         assert not (~self.need & ~self.need)()
+
+    def test_xor_need(self):
+        assert not (self.need ^ self.need)()
+        assert (~self.need ^ self.need)()
+        assert (self.need ^ ~self.need)()
+        assert not (~self.need & ~self.need)()
