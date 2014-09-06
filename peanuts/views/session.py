@@ -1,9 +1,11 @@
 """View(s) for dealing with authentication and the session object."""
 
 
+from needs import needs
+
 from flask.ext.classy import route
 
-from peanuts.lib.auth import needs, login_need
+from peanuts.lib.auth import login_need
 from peanuts.views.base import BaseView
 from peanuts.controllers.session import (
     SessionController, AuthPeanutsController
