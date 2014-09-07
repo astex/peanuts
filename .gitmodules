@@ -1,0 +1,3 @@
+[submodule "peanuts/front/admin"]
+	path = peanuts/front/admin
+	url = https://github.com/astex/peanuts.admin.git
