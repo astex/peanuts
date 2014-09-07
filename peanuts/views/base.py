@@ -3,8 +3,12 @@
 """
 
 
+from needs import needs
+
 from flask import request, jsonify
 from flask.ext.classy import FlaskView
+
+from peanuts.lib.auth import app_need
 
 
 __all__ = ['BaseView', 'BaseRestView']
@@ -52,6 +56,13 @@ class BaseView(FlaskView):
             url=self.request.url,
             method=self.request.method
             )
+
+    @needs(app_need)
+    def before_request(self, name, *args, **kargs):
+        """This is wrapped in an app_need since only registered apps may
+            access these endpoint.
+        """
+        pass
 
 class BaseRestView(BaseView):
     """A base class for RESTful views."""
