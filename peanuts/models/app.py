@@ -30,7 +30,7 @@ class Application(Model):
     #   using.  It is exposed freely to the user and can be spoofed.
     token = db.Column(
         'token',
-        db.Binary(16),
+        db.Unicode,
         index=True,
         nullable=False
         )
@@ -47,7 +47,7 @@ class Application(Model):
     repo_url = db.Column(db.Unicode(255))
 
     # A json dump of all configuration parameters for the app.
-    config = db.Column(db.UnicodeText, nullable=False)
+    config = db.Column(db.UnicodeText)
 
     def get_dictionary(self, verbosity='none'):
         """Return a serializable dictionary representation of the application.
