@@ -10,7 +10,7 @@ __all__ = ['SessionTest']
 
 class SessionTest(BaseTestCase):
     """A unit test for sessions."""
-    base_url = '/session'
+    base_url = '/api/session'
 
     def test_get_401(self):
         """Tests that the /session/ GET endpoint 401s if not logged in."""

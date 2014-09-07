@@ -82,7 +82,7 @@ class BaseTestCase(TestCase):
     def login(self, provider, user, password):
         """Logs in a user via a given auth provider."""
         if provider == 'peanuts':
-            return self.post('/session/peanuts/', data={
+            return self.post('/api/session/peanuts/', data={
                 'email': user.peanuts_auth.email,
                 'password': password
                 })
@@ -91,7 +91,7 @@ class BaseTestCase(TestCase):
 
     def logout(self):
         """Logs out a user."""
-        self.delete('/session/')
+        self.delete('/api/session/')
 
 class RestTestCase(BaseTestCase):
     """A base test case for RESTful views."""

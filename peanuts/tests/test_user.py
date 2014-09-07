@@ -10,7 +10,7 @@ __all__ = ['UserTest']
 
 class UserTest(RestTestCase):
     """A unit test for Users."""
-    base_url = '/user'
+    base_url = '/api/user'
     Model = User
 
     def test_post(self):
@@ -21,7 +21,7 @@ class UserTest(RestTestCase):
             'confirm_password': '123abc'
             }, verbosity='self')
 
-        r = self.get('/session/')
+        r = self.get('/api/session/')
         assert r.status_code == 200
         assert 'data' in r.json
 
@@ -66,7 +66,7 @@ class UserTest(RestTestCase):
         assert r.status_code == 201
 
         # Check that the first admin is still logged in.
-        r = self.get('/session/')
+        r = self.get('/api/session/')
         assert 'data' in r.json
         assert 'user_id' in r.json['data']
         assert first_admin_id == r.json['data']['user_id']
