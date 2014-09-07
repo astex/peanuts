@@ -16,11 +16,6 @@ class BaseTestCase(TestCase):
     """A base test case."""
     base_url = ''
 
-    def __init__(self, *args, **kargs):
-        self.db_session = db.session
-        self.data = Fixtures(self.db_session)
-        super(BaseTestCase, self).__init__(*args, **kargs)
-
     def commit(self):
         """Rolls back database commits if they fail."""
         try:
@@ -36,6 +31,9 @@ class BaseTestCase(TestCase):
     def setUp(self):
         """Creates the database and requisite models."""
         db.create_all()
+        self.db_session = db.session
+        self.data = Fixtures(self.db_session)
+        self.test_app = self.data.test_app
 
     def tearDown(self):
         """Drops the (data)base."""
@@ -46,7 +44,10 @@ class BaseTestCase(TestCase):
     def get(self, url, **kargs):
         """A wrapper for TestClient.get()."""
         kargs.update({
-            'headers': [('accepts','application/json; charset=utf-8')]
+            'headers': [
+                ('accepts','application/json; charset=utf-8'),
+                ('x-peanuts-application', self.test_app.token)
+                ]
             })
         return self.client.get(url, **kargs)
 
@@ -55,7 +56,8 @@ class BaseTestCase(TestCase):
         kargs.update({
             'headers': [
                 ('accepts', 'application/json; charset=utf-8'),
-                ('content-type', 'application/json; charset=utf-8')
+                ('content-type', 'application/json; charset=utf-8'),
+                ('x-peanuts-application', self.test_app.token)
                 ],
             'data': json.dumps(kargs.get('data', {}))
             })
@@ -66,7 +68,8 @@ class BaseTestCase(TestCase):
         kargs.update({
             'headers': [
                 ('accepts', 'application/json; charset=utf-8'),
-                ('content-type', 'application/json; charset=utf-8')
+                ('content-type', 'application/json; charset=utf-8'),
+                ('x-peanuts-application', self.test_app.token)
                 ],
             'data': json.dumps(kargs.get('data', {}))
             })
@@ -75,7 +78,10 @@ class BaseTestCase(TestCase):
     def delete(self, url, **kargs):
         """A wrapper for TestClient.delete()."""
         kargs.update({
-            'headers': [('accepts', 'application/json; charset=utf-8')]
+            'headers': [
+                ('accepts', 'application/json; charset=utf-8'),
+                ('x-peanuts-application', self.test_app.token)
+                ]
             })
         return self.client.delete(url, **kargs)
 

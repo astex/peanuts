@@ -1,7 +1,10 @@
 """A collections of static fixtures for testing."""
 
 
+import uuid
+
 from peanuts.models.user import PeanutsAuth, User
+from peanuts.models.app import Application
 
 
 __all__ = ['Fixtures']
@@ -38,3 +41,17 @@ class Fixtures(object):
         self.commit()
 
         return user, password
+
+    @property
+    def test_app(self):
+        """A test application."""
+        test_app = Application(
+            title='Test',
+            description='An application to use for unit testing.',
+            token=str(uuid.uuid4())
+            )
+
+        self.db_session.add(test_app)
+        self.commit()
+
+        return test_app
