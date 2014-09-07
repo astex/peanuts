@@ -1,14 +1,12 @@
 """A library for dealing with authentication."""
 
 
-from functools import wraps
-from copy import copy
 from needs import Need
 
 from werkzeug.exceptions import Unauthorized
 
 
-__all__ = ['FlaskNeed', 'login_need', 'admin_need']
+__all__ = ['FlaskNeed', 'no_apps_need', 'app_need', 'login_need', 'admin_need']
 
 
 class FlaskNeed(Need):
@@ -27,6 +25,19 @@ class FlaskNeed(Need):
         from peanuts.lib.database import db
         return db.session
 
+class ApplicationNeed(FlaskNeed):
+    """A need that checks for a valid application."""
+    def is_met(self):
+        return bool(self.session.application)
+
+class NoApplicationsNeed(FlaskNeed):
+    """A need that checks that no applications exist."""
+    def is_met(self):
+        from peanuts.models.app import Application
+        return not self.db_session.query(
+            self.db_session.query(Application).exists()
+            ).first()[0]
+
 class LoginNeed(FlaskNeed):
     """A need that checks basic authentication."""
     def is_met(self):
@@ -39,5 +50,7 @@ class AdminNeed(FlaskNeed):
         """Checks if the user is an admin."""
         return bool(self.session.user and self.session.user.is_admin)
 
+no_apps_need = NoApplicationsNeed()
+app_need = ApplicationNeed()
 login_need = LoginNeed()
 admin_need = AdminNeed()
