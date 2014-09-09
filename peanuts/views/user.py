@@ -3,9 +3,9 @@
 
 from needs import no_need
 
-from peanuts.lib.auth import FlaskNeed, login_need, admin_need
-from peanuts.lib.database import db
-
+from peanuts.lib.auth import (
+    SelfNeed, login_need, admin_need, no_user_need
+    )
 from peanuts.models.user import User
 from peanuts.views.base import BaseRestView
 from peanuts.controllers.user import UserController
@@ -13,30 +13,6 @@ from peanuts.controllers.user import UserController
 
 __all__ = ['UserView']
 
-
-class SelfNeed(FlaskNeed):
-    """Checks that the user is looking at itself."""
-    def __init__(self, user_id):
-        self.user_id = user_id
-
-    def is_met(self):
-        """Checks if the user_id is the user_id in the session."""
-        return bool(
-            (
-                self.session.user and
-                str(self.session.user.id) == self.user_id
-                ) or
-            admin_need()
-            )
-
-class NoUserNeed(FlaskNeed):
-    """A need to check that there are no users."""
-    def is_met(self):
-        return not self.db_session.query(
-            db.session.query(User).exists()
-            ).first()[0]
-
-no_user_need = NoUserNeed()
 
 class UserView(BaseRestView):
     """A view for manipulating users."""
