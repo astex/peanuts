@@ -41,7 +41,7 @@ def create_app(config):
                 # Unless overridden by a direct database operation, the first
                 #   app to be accessed should be admin.
                 admin_app = Application(
-                    token=str(uuid.uuid4()),
+                    token=app.config['ADMIN_TOKEN'],
                     title='Admin',
                     description='The administrative application.',
                     slug='admin',
