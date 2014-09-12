@@ -41,16 +41,6 @@ class PeanutsSession(SecureCookieSession):
         from peanuts.lib.database import db
         from peanuts.models.user import User
 
-        csrf = self.get('csrf')
-        header_csrf = self.request.headers.get('x-peanuts-csrf')
-
-        if (
-                not csrf or
-                csrf and not header_csrf or
-                csrf != header_csrf
-            ):
-            raise Forbidden('CSRF token rejected.')
-
         user_id = self.get('user_id')
         if user_id:
             return db.session.query(User).get(user_id)
