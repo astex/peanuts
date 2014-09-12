@@ -36,13 +36,13 @@ class FlaskNeed(Need):
 
 class ApplicationNeed(FlaskNeed):
     """A need that checks for a valid application."""
+    error = Forbidden
+
     def is_met(self):
         return bool(self.session.application)
 
 class NoApplicationsNeed(FlaskNeed):
     """A need that checks that no applications exist."""
-    error = Forbidden
-
     def is_met(self):
         from peanuts.models.app import Application
         return not self.db_session.query(
