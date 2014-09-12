@@ -41,12 +41,23 @@ class BaseTestCase(TestCase):
         db.session.remove()
         db.drop_all()
 
+    @property
+    def csrf(self):
+        """Gets a new csrf token from the server."""
+        # Get the csrf token.
+        r = self.client.get('/api/session/csrf/', headers=[
+            ('accepts', 'application/json; charset=utf-8'),
+            ('x-peanuts-application', self.test_app.token)
+            ])
+        return r.json['data']['csrf']
+
     def get(self, url, **kargs):
         """A wrapper for TestClient.get()."""
         kargs.update({
             'headers': [
                 ('accepts','application/json; charset=utf-8'),
-                ('x-peanuts-application', self.test_app.token)
+                ('x-peanuts-application', self.test_app.token),
+                ('x-peanuts-csrf', self.csrf)
                 ]
             })
         return self.client.get(url, **kargs)
@@ -57,7 +68,8 @@ class BaseTestCase(TestCase):
             'headers': [
                 ('accepts', 'application/json; charset=utf-8'),
                 ('content-type', 'application/json; charset=utf-8'),
-                ('x-peanuts-application', self.test_app.token)
+                ('x-peanuts-application', self.test_app.token),
+                ('x-peanuts-csrf', self.csrf)
                 ],
             'data': json.dumps(kargs.get('data', {}))
             })
@@ -69,7 +81,8 @@ class BaseTestCase(TestCase):
             'headers': [
                 ('accepts', 'application/json; charset=utf-8'),
                 ('content-type', 'application/json; charset=utf-8'),
-                ('x-peanuts-application', self.test_app.token)
+                ('x-peanuts-application', self.test_app.token),
+                ('x-peanuts-csrf', self.csrf)
                 ],
             'data': json.dumps(kargs.get('data', {}))
             })
@@ -80,7 +93,8 @@ class BaseTestCase(TestCase):
         kargs.update({
             'headers': [
                 ('accepts', 'application/json; charset=utf-8'),
-                ('x-peanuts-application', self.test_app.token)
+                ('x-peanuts-application', self.test_app.token),
+                ('x-peanuts-csrf', self.csrf)
                 ]
             })
         return self.client.delete(url, **kargs)

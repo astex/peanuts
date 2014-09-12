@@ -1,6 +1,7 @@
 """View(s) for dealing with authentication and the session object."""
 
 
+import uuid
 from needs import needs
 
 from flask.ext.classy import route
@@ -29,6 +30,13 @@ class SessionView(BaseView):
     def delete(self):
         """Deletes the current session (logs out a user)."""
         return self.jsonify(self.controller.delete())
+
+    @route('/csrf/', methods=['GET'])
+    def csrf(self):
+        """Provides a csrf token."""
+        csrf = str(uuid.uuid4())
+        self.session['csrf'] = csrf
+        return self.jsonify({'csrf': csrf})
 
 class AuthPeanutsView(BaseView):
     """The view for authenticating a peanuts session."""

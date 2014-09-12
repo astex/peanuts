@@ -5,7 +5,7 @@
 
 from needs import needs
 
-from flask import request, jsonify
+from flask import request, jsonify, session
 from flask.ext.classy import FlaskView
 
 from peanuts.lib.auth import app_need
@@ -18,8 +18,15 @@ class BaseView(FlaskView):
     """A base class for RESTful views."""
     Controller = None
 
-    def __init__(self):
-        self.request = request
+    @property
+    def request(self):
+        """Returns the flask request object."""
+        return request
+
+    @property
+    def session(self):
+        """Returns the flask session object."""
+        return session
 
     @property
     def controller(self):
