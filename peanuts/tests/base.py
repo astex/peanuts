@@ -46,7 +46,8 @@ class BaseTestCase(TestCase):
         """Gets a new csrf token from the server."""
         # Get the csrf token.
         r = self.client.get('/csrf/', headers=[
-            ('accepts', 'application/json; charset=utf-8')
+            ('accepts', 'application/json; charset=utf-8'),
+            ('x-peanuts-application', self.test_app.token)
             ])
         return r.json['csrf']
 
