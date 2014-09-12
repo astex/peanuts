@@ -7,7 +7,6 @@ from peanuts.tests.base import BaseTestCase
 class CSRFTestCase(BaseTestCase):
     """A series of tests that confirm CSRF protection is working as necessary.
     """
-
     def test_get(self):
         """Tests that we can receive a csrf token."""
         r = self.client.get('/csrf/', headers=[
