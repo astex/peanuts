@@ -2,12 +2,14 @@
 
 
 import os, uuid
+from needs import needs
 
 from werkzeug.exceptions import NotFound
 from flask import render_template, send_from_directory, jsonify
 
 from peanuts.views import post, user, session
 from peanuts.lib.database import db
+from peanuts.lib.auth import app_need
 from peanuts.models.app import Application
 
 
@@ -22,6 +24,7 @@ def register(app, route_base=''):
         )
 
     @app.route('/csrf/')
+    @needs(app_need)
     def csrf():
         """Returns a CSRF token."""
         from flask import session
