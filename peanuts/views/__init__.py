@@ -1,10 +1,10 @@
 """Views and routing."""
 
 
-import os
+import os, uuid
 
 from werkzeug.exceptions import NotFound
-from flask import render_template, send_from_directory
+from flask import render_template, send_from_directory, jsonify
 
 from peanuts.views import post, user, session
 from peanuts.lib.database import db
@@ -20,6 +20,15 @@ def register(app, route_base=''):
         app,
         route_base=route_base + '/session/peanuts/'
         )
+
+    @app.route('/csrf/')
+    def csrf():
+        """Returns a CSRF token."""
+        from flask import session
+
+        csrf = str(uuid.uuid4())
+        session['csrf'] = csrf
+        return jsonify({'csrf': csrf})
 
     @app.route('/<string:app_name>/')
     def app_index(app_name):

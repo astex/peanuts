@@ -45,11 +45,10 @@ class BaseTestCase(TestCase):
     def csrf(self):
         """Gets a new csrf token from the server."""
         # Get the csrf token.
-        r = self.client.get('/api/session/csrf/', headers=[
-            ('accepts', 'application/json; charset=utf-8'),
-            ('x-peanuts-application', self.test_app.token)
+        r = self.client.get('/csrf/', headers=[
+            ('accepts', 'application/json; charset=utf-8')
             ])
-        return r.json['data']['csrf']
+        return r.json['csrf']
 
     def get(self, url, **kargs):
         """A wrapper for TestClient.get()."""

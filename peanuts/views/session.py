@@ -31,13 +31,6 @@ class SessionView(BaseView):
         """Deletes the current session (logs out a user)."""
         return self.jsonify(self.controller.delete())
 
-    @route('/csrf/', methods=['GET'])
-    def csrf(self):
-        """Provides a csrf token."""
-        csrf = str(uuid.uuid4())
-        self.session['csrf'] = csrf
-        return self.jsonify({'csrf': csrf})
-
 class AuthPeanutsView(BaseView):
     """The view for authenticating a peanuts session."""
     Controller = AuthPeanutsController

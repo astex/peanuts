@@ -8,7 +8,7 @@ from needs import needs
 from flask import request, jsonify, session
 from flask.ext.classy import FlaskView
 
-from peanuts.lib.auth import app_need
+from peanuts.lib.auth import app_need, csrf_need
 
 
 __all__ = ['BaseView', 'BaseRestView']
@@ -65,6 +65,7 @@ class BaseView(FlaskView):
             )
 
     @needs(app_need)
+    @needs(csrf_need)
     def before_request(self, name, *args, **kargs):
         """This is wrapped in an app_need since only registered apps may
             access these endpoint.
