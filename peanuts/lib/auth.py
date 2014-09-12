@@ -3,10 +3,13 @@
 
 from needs import Need
 
-from werkzeug.exceptions import Unauthorized
+from werkzeug.exceptions import Unauthorized, Forbidden
 
 
-__all__ = 'SelfNeed', 'no_apps_need', 'app_need', 'login_need', 'admin_need'
+__all__ = [
+    'SelfNeed', 'no_apps_need', 'app_need', 'login_need', 'admin_need',
+    'csrf_need'
+    ]
 
 
 class FlaskNeed(Need):
@@ -25,6 +28,12 @@ class FlaskNeed(Need):
         from peanuts.lib.database import db
         return db.session
 
+    @property
+    def request(self):
+        """The flask request."""
+        from flask import request
+        return request
+
 class ApplicationNeed(FlaskNeed):
     """A need that checks for a valid application."""
     def is_met(self):
@@ -32,6 +41,8 @@ class ApplicationNeed(FlaskNeed):
 
 class NoApplicationsNeed(FlaskNeed):
     """A need that checks that no applications exist."""
+    error = Forbidden
+
     def is_met(self):
         from peanuts.models.app import Application
         return not self.db_session.query(
@@ -74,8 +85,26 @@ class SelfNeed(FlaskNeed):
             admin_need()
             )
 
+class CSRFNeed(FlaskNeed):
+    """Checks that a valid csrf token is provided."""
+    error = Forbidden
+
+    def is_met(self):
+        """Checks the csrf token."""
+        csrf = self.session.get('csrf')
+        header_csrf = self.request.headers.get('x-peanuts-csrf')
+
+        if (
+                not csrf or
+                csrf and not header_csrf or
+                csrf != header_csrf
+            ):
+            return False
+        return True
+
 no_apps_need = NoApplicationsNeed()
 app_need = ApplicationNeed()
 login_need = LoginNeed()
 admin_need = AdminNeed()
 no_user_need = NoUserNeed()
+csrf_need = CSRFNeed()
