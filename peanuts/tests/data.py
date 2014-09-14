@@ -43,6 +43,28 @@ class Fixtures(object):
         return user, password
 
     @property
+    def peanuts_admin_user(self):
+        """A peanuts user with admin permission.
+
+            Returns:
+                (tuple (user, password))
+        """
+        password = '123abc'
+        peanuts_auth = PeanutsAuth(
+            email='test1@example.org',
+            password=password
+            )
+        user = User(
+            is_admin=True,
+            peanuts_auth=peanuts_auth
+            )
+
+        self.db_session.add(user)
+        self.commit()
+
+        return user, password
+
+    @property
     def test_app(self):
         """A test application."""
         test_app = Application(

@@ -75,6 +75,10 @@ class UserTest(RestTestCase):
         """Tests that admin permission is needed to post an admin to
             /user/ POST normally.
         """
+        # Generates an admin user so that we are not attempting initial
+        #   registration.
+        self.data.peanuts_admin_user
+
         user, password = self.data.peanuts_user
         self.login('peanuts', user, password)
         r = self.post(self.base_url + '/', data={
