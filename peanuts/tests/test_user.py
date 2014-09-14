@@ -18,7 +18,7 @@ class UserTest(RestTestCase):
         super(UserTest, self)._test_post({
             'email': 'test@example.org',
             'password': '123abc',
-            'confirm_password': '123abc'
+            'confirm': '123abc'
             }, verbosity='self')
 
         r = self.get('/api/session/')
@@ -34,7 +34,7 @@ class UserTest(RestTestCase):
         super(UserTest, self)._test_post({
             'email': 'test@example.org',
             'password': '123abc',
-            'confirm_password': '123abc',
+            'confirm': '123abc',
             'is_admin': True
             }, verbosity='self')
 
@@ -45,8 +45,8 @@ class UserTest(RestTestCase):
         password = '123abc'
         r = self.post(self.base_url + '/', data={
             'email': 'test@example.org',
-            'password': '123abc',
-            'confirm_password': password,
+            'password': password,
+            'confirm': password,
             'is_admin': True
             }, query_string={'verbosity': 'admin'})
         assert 'data' in r.json
@@ -59,8 +59,8 @@ class UserTest(RestTestCase):
         # The first admin is logged in, create a second.
         r = self.post(self.base_url + '/', data={
             'email': 'test2@example.org',
-            'password': '123abc',
-            'confirm_password': '123abc',
+            'password': password,
+            'confirm': password,
             'is_admin': True
             })
         assert r.status_code == 201
@@ -79,8 +79,8 @@ class UserTest(RestTestCase):
         self.login('peanuts', user, password)
         r = self.post(self.base_url + '/', data={
             'email': 'test2@example.org',
-            'password': '123abc',
-            'confirm_password': '123abc',
+            'password': password,
+            'confirm': password,
             'is_admin': True
             })
         assert r.status_code == 401

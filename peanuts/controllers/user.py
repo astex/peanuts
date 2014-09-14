@@ -20,7 +20,7 @@ class UserController(BaseRestController):
             submodels including data and authentication.
         """
         password = post_data.get('password')
-        password_confirm = post_data.get('password')
+        password_confirm = post_data.get('confirm')
 
         if not password or password != password_confirm:
             raise BadRequest('Password and confirmation don\'t match')
@@ -39,7 +39,7 @@ class UserController(BaseRestController):
             email=email,
             first_name=post_data.get('first_name'),
             last_name=post_data.get('last_name'),
-            user_name=post_data.get('user_name')
+            user_name=post_data.get('username')
             )
         peanuts_auth = PeanutsAuth(
             email=email,
@@ -58,6 +58,6 @@ class UserController(BaseRestController):
         if not admin_need():
             self.session.clear()
             self.session['user_id'] = user.id_
-            self.session.permanent = post_data.get('stay_logged_in')
+            self.session.permanent = post_data.get('remember')
 
         return user
